@@ -1,9 +1,11 @@
+#![no_std]
 #![allow(static_mut_refs)]
 
 mod task;
 
 use embassy_sync::{blocking_mutex::raw::CriticalSectionRawMutex, mutex::Mutex, signal::Signal};
-pub use task::start_logger;
+pub use task::logger_task;
+pub use task::logger_task_custom_sender;
 
 static mut RESTORE: critical_section::RestoreState = critical_section::RestoreState::invalid();
 static mut TAKEN: bool = false;
