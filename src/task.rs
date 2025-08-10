@@ -1,5 +1,6 @@
 //! Main task that runs the USB transport layer.
 
+use embassy_futures::join::join;
 use embassy_usb::{
     Builder, Config,
     class::cdc_acm::Sender,
@@ -40,7 +41,9 @@ pub async fn logger_task<D: Driver<'static>>(driver: D, vid: u16, pid: u16) {
     );
     let (sender, _) = defmt_usb.split();
 
-    logger_task_custom_sender(sender, 64, true).await;
+    let mut usb = builder.build();
+
+    join(usb.run(), logger_task_custom_sender(sender, 64, true)).await;
 }
 
 /// Runs the logger task with user-provided cdc acm sender.
